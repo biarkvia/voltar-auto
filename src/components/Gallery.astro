@@ -1,0 +1,65 @@
+---
+import { Image, getImage } from 'astro:assets';
+import lift from '../assets/images/lift.jpg';
+import brakes from '../assets/images/brakes.jpg';
+import diagnostics from '../assets/images/diagnostics.jpg';
+import tools from '../assets/images/tools.jpg';
+const pictures = [
+  { src: lift, caption: 'Na zvedáku', alt: 'Šedý a černý vůz na zvedácích v osvětlené dílně.' },
+  { src: diagnostics, caption: 'Diagnostika motoru', alt: 'Mechanik v rukavicích kontroluje vůz ručním měřicím přístrojem.' },
+  { src: tools, caption: 'Dílenské nářadí', alt: 'Mechanik vybírá nástrčný klíč ze zásuvky s nářadím.' },
+  { src: brakes, caption: 'Detail brzd', alt: 'Kontrola brzdového třmenu po sejmutí kola.' }
+];
+const full = await Promise.all(pictures.map(p => getImage({src: p.src, width: 1440, format: 'webp', quality: 82})));
+---
+<section class="gallery section dark-section" id="galerie" aria-labelledby="gallery-title" tabindex="-1">
+  <div class="wrap">
+    <div class="section-head"><div><p class="eyebrow">Pohled do dílny</p><h2 id="gallery-title">Galerie<span class="period">.</span></h2></div></div>
+    <div class="gallery-grid">{pictures.map((p, i) => <a class="gallery-photo" href={full[i].src} data-caption={p.caption} aria-label={'Zvětšit fotografii – ' + p.caption}>
+      <Image src={p.src} widths={[400, 680, 1000]} sizes="(min-width: 850px) 42vw, (min-width: 500px) 50vw, 100vw" format="webp" loading="lazy" alt={p.alt}/>
+      <span class="gallery-caption">{p.caption}</span><span class="zoom" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 10V4h6m4 0h6v6M4 14v6h6m4 0h6v-6"/></svg></span>
+    </a>)}</div>
+  </div>
+  <dialog class="lightbox" aria-labelledby="lightbox-title">
+    <div class="lightbox-head"><h3 id="lightbox-title"></h3><button class="close-button" type="button" aria-label="Zavřít fotografii" autofocus>×</button></div>
+    <img class="lightbox-image" width="1440" height="960" alt=""/>
+    <div class="lightbox-controls"><button type="button" data-delta="-1">Předchozí</button><span aria-live="polite"></span><button type="button" data-delta="1">Další</button></div>
+  </dialog>
+</section>
+<script>
+  const photos = [...document.querySelectorAll<HTMLAnchorElement>('.gallery-photo')];
+  const dialog = document.querySelector<HTMLDialogElement>('.lightbox')!;
+  const preview = dialog.querySelector('img')!;
+  const caption = dialog.querySelector('h3')!;
+  const position = dialog.querySelector('.lightbox-controls span')!;
+  let current = 0;
+  function showPhoto(index: number) {
+    current = (index + photos.length) % photos.length;
+    const photo = photos[current];
+    preview.alt = photo.querySelector('img')!.alt;
+    preview.src = photo.href;
+    caption.textContent = photo.dataset.caption || '';
+    position.textContent = (current + 1) + ' / ' + photos.length;
+  }
+  photos.forEach((photo, i) => photo.addEventListener('click', event => {
+    if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || !dialog.showModal) return;
+    event.preventDefault();
+    showPhoto(i);
+    dialog.showModal();
+  }));
+  dialog.querySelector('.close-button')!.addEventListener('click', () => dialog.close());
+  dialog.querySelectorAll<HTMLButtonElement>('[data-delta]').forEach(btn => {
+    btn.addEventListener('click', () => showPhoto(current + Number(btn.dataset.delta)));
+  });
+  dialog.addEventListener('keydown', event => {
+    if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+      event.preventDefault();
+      showPhoto(current + (event.key === 'ArrowLeft' ? -1 : 1));
+    }
+  });
+  dialog.addEventListener('click', event => {
+    if (event.target !== dialog) return;
+    const box = dialog.getBoundingClientRect();
+    if (event.clientX < box.left || event.clientX > box.right || event.clientY < box.top || event.clientY > box.bottom) dialog.close();
+  });
+</script>
