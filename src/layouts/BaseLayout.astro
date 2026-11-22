@@ -1,0 +1,28 @@
+---
+import { getImage } from 'astro:assets';
+import hero from '../assets/images/hero.jpg';
+import { site } from '../data/site';
+import '../styles/global.css';
+const title = site.name + ' | Autoservis v Praze';
+const description = site.isDemo ? 'Ukázka fiktivního autoservisu VOLTAR AUTO v Praze. Prohlédněte si služby, nahlédněte do dílny a vyzkoušejte si poptávkový formulář.' : site.description;
+const canonical = Astro.site && new URL(Astro.url.pathname, Astro.site);
+const cover = await getImage({src: hero, width: 1200, height: 630, format: 'jpg', fit: 'cover', position: 'right'});
+---
+<!doctype html>
+<html lang="cs">
+  <head>
+    <meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="theme-color" content="#14171c"/><meta name="description" content={description}/>
+    {site.isDemo && <meta name="robots" content="noindex, nofollow"/>}
+    <title>{title}</title><link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
+    {canonical && <link rel="canonical" href={canonical}/>}
+    <meta property="og:type" content="website"/><meta property="og:locale" content="cs_CZ"/>
+    <meta property="og:title" content={title}/><meta property="og:description" content={description}/>
+    <meta property="og:site_name" content={site.name}/>
+    <meta property="og:image" content={Astro.site ? new URL(cover.src, Astro.site).href : cover.src}/>
+    <meta property="og:image:width" content="1200"/><meta property="og:image:height" content="630"/>
+    <meta property="og:image:alt" content="Stříbrné sportovní kupé v dílně VOLTAR AUTO."/>
+    {canonical && <meta property="og:url" content={canonical.href}/>}
+  </head>
+  <body id="zacatek"><a class="skip-link" href="#obsah">Přejít na obsah</a><slot/></body>
+</html>

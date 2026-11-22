@@ -1,0 +1,18 @@
+---
+import ServiceIcon from './ServiceIcon.astro';
+import { services } from '../data/site';
+---
+<section id="sluzby" class="section services" aria-labelledby="services-title" tabindex="-1">
+  <div class="wrap">
+    <div class="section-head">
+      <div><p class="eyebrow">Co děláme</p><h2 id="services-title">Naše služby<span class="period">.</span></h2></div>
+      <p>Od pravidelné údržby po hledání závad.<br class="wide-only"/> Vyberte si, s čím potřebujete pomoci.</p>
+    </div>
+    <div class="service-grid">
+      {services.map(service => <a class="service-card" href="#kontakt" data-service={service.id}>
+        <ServiceIcon kind={service.id}/><h3>{service.title}</h3><p>{service.description}</p>
+        <span class="sr-only">Poptat tuto službu.</span>
+      </a>)}
+    </div>
+  </div>
+</section>

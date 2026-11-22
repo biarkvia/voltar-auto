@@ -1,0 +1,11 @@
+---
+import { site } from '../data/site';
+---
+<section class="process section" id="postup" aria-labelledby="process-title" tabindex="-1">
+  <div class="wrap">
+    <div class="section-head"><div><p class="eyebrow">Průběh servisu</p><h2 id="process-title">Jak to funguje<span class="period">.</span></h2></div></div>
+    <ol class="steps">{site.steps.map((step, index) => <li>
+      <div class="step-top"><span aria-hidden="true">{String(index + 1).padStart(2, '0')}</span></div>
+      <h3>{step.title}</h3><p>{step.text}</p></li>)}</ol>
+  </div>
+</section>

@@ -1,0 +1,14 @@
+---
+import { Image } from 'astro:assets';
+import engine from '../assets/images/engine-work.jpg';
+import Icon from './Icon.astro';
+import { site } from '../data/site';
+---
+<section class="advantages section dark-section" aria-labelledby="advantages-title">
+  <div class="wrap advantage-pair">
+    <div class="advantage-image"><Image src={engine} widths={[480, 760, 1100]} sizes="(min-width: 950px) 45vw, 100vw" format="webp" loading="lazy" alt="Detail rukou mechanika při práci s klíčem u otevřeného motoru."/></div>
+    <div class="advantage-copy"><p class="eyebrow">Proč si vybrat nás</p><h2 id="advantages-title">Víte, na čem jste<span class="period">.</span></h2>
+      <ul class="advantage-list">{site.advantages.map(a => <li><span class="check-icon"><Icon name="check" size={18}/></span><div><h3>{a.title}</h3><p>{a.text}</p></div></li>)}</ul>
+    </div>
+  </div>
+</section>

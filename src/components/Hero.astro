@@ -1,0 +1,26 @@
+---
+import { Image } from 'astro:assets';
+import hero from '../assets/images/hero.jpg';
+import Icon from './Icon.astro';
+import { site } from '../data/site';
+---
+<section class="hero" aria-labelledby="hero-title">
+  <Image class="hero-photo" src={hero} widths={[600, 960, 1440, 1983]} sizes="100vw" format="webp" quality={86} loading="eager" fetchpriority="high" alt="Stříbrné sportovní kupé v šeru servisní dílny."/>
+  <div class="hero-shade" aria-hidden="true"></div>
+  <div class="hero-inner wrap">
+    <div class="hero-copy">
+      <p class="eyebrow hero-eyebrow">Autoservis v Praze</p>
+      <h1 id="hero-title">{site.slogan[0]}<br/><em>{site.slogan[1]}</em></h1>
+      <p class="hero-intro">{site.description}</p>
+      <div class="hero-actions">
+        <a class="button button-orange" href="#kontakt"><Icon name="calendar" size={19}/>Objednat termín</a>
+        <a class="button button-outline" href="#sluzby">Naše služby</a>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="promise-strip">
+  <ul class="wrap promise-list">
+    {site.promises.map(p => <li><Icon name={p.icon} size={29}/><span>{p.title}</span></li>)}
+  </ul>
+</div>

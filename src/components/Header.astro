@@ -1,0 +1,52 @@
+---
+import Brand from './Brand.astro';
+import { site } from '../data/site';
+---
+<header class="header">
+  <div class="wrap nav-row">
+    <Brand/>
+    <button type="button" class="nav-toggle" aria-controls="hlavni-navigace" aria-expanded="false" aria-label="Otevřít hlavní nabídku" hidden>
+      <span></span><span></span><span></span>
+    </button>
+    <nav id="hlavni-navigace" class="header-nav" aria-label="Hlavní navigace">
+      {site.nav.map(item => <a href={item.href}>{item.label}</a>)}
+      <a href="#kontakt" class="button button-orange nav-cta">Objednat servis</a>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const toggle = document.querySelector<HTMLButtonElement>('.nav-toggle')!;
+  const nav = document.querySelector<HTMLElement>('.header-nav')!;
+  const header = document.querySelector<HTMLElement>('.header')!;
+  const desktop = matchMedia('(min-width: 56rem)');
+  toggle.hidden = false;
+  header.classList.add('enhanced');
+
+  function setMenu(open: boolean) {
+    toggle.setAttribute('aria-expanded', String(open));
+    toggle.setAttribute('aria-label', open ? 'Zavřít hlavní nabídku' : 'Otevřít hlavní nabídku');
+    nav.classList.toggle('open', open);
+  }
+  toggle.addEventListener('click', () => setMenu(toggle.getAttribute('aria-expanded') !== 'true'));
+  header.addEventListener('focusout', event => {
+    if (!header.contains(event.relatedTarget as Node | null)) setMenu(false);
+  });
+  document.addEventListener('click', event => {
+    if (!header.contains(event.target as Node)) setMenu(false);
+  });
+  nav.addEventListener('click', event => {
+    const link = (event.target as Element).closest('a');
+    if (link && !desktop.matches) {
+      setMenu(false);
+      document.querySelector<HTMLElement>(link.hash)?.focus({preventScroll: true});
+    }
+  });
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') {
+      setMenu(false);
+      toggle.focus();
+    }
+  });
+  desktop.addEventListener('change', () => setMenu(false));
+</script>

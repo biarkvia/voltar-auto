@@ -1,0 +1,14 @@
+---
+import { Image } from 'astro:assets';
+import workshop from '../assets/images/workshop.jpg';
+import { site } from '../data/site';
+---
+<section id="o-nas" class="about section" aria-labelledby="about-title" tabindex="-1">
+  <div class="wrap about-pair">
+    <div class="about-copy"><p class="eyebrow">O nás</p><h2 id="about-title">Za vraty dílny<span class="period">.</span></h2>
+      <p>V {site.name} věříme, že dobrý servis začíná rozhovorem. Zajímá nás, jak se vůz chová při každodenní jízdě a co od opravy očekáváte.</p>
+      <p>Ať jde o běžnou údržbu, nebo nezvyklý zvuk motoru, nejdřív zjistíme příčinu. Pak s vámi projdeme možnosti, abyste se mohli v klidu rozhodnout.</p>
+    </div>
+    <Image src={workshop} widths={[480, 760, 1100]} sizes="(min-width: 850px) 50vw, 100vw" format="webp" loading="lazy" alt="Světlá servisní hala se zvedákem a rozpracovaným vozem."/>
+  </div>
+</section>

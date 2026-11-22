@@ -1,0 +1,12 @@
+---
+import Brand from './Brand.astro';
+import Icon from './Icon.astro';
+import { site } from '../data/site';
+---
+<footer class="footer"><div class="wrap">
+  <div class="footer-top"><div><Brand/><p>Diagnostika, údržba a opravy vozů v Praze.</p></div>
+    <nav aria-label="Navigace v zápatí">{site.nav.map(item => <a href={item.href}>{item.label}</a>)}</nav></div>
+  <div class="footer-bottom"><span>© {new Date().getFullYear()} {site.name}</span>
+    {site.isDemo && <span class="demo-label">{site.demoLabel}</span>}
+    <a href="#zacatek">Zpět nahoru <Icon name="top" size={16}/></a></div>
+</div></footer>
