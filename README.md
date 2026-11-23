@@ -23,6 +23,9 @@ Open the local URL printed by Astro, normally `http://localhost:4321`. For repea
 | `npm run check` | Check Astro components and strict TypeScript |
 | `npm run build` | Compile the production site into `dist/` |
 | `npm run preview` | Serve the last production build locally |
+| `npm run test:e2e` | Run the browser tests against the last build |
+
+For the browser tests, install Chromium once with `npx playwright install chromium`, then run `npm run build` and `npm run test:e2e`. Use the same `SITE_BASE_PATH` for both commands if testing a subdirectory deployment.
 
 ## Stack and structure
 
@@ -34,7 +37,7 @@ Astro 7, strict TypeScript, semantic HTML and mobile-first CSS. Astro Image and 
 | `src/components/` | Individual page sections, original brand mark and service icons |
 | `src/styles/global.css` | Colour palette, typography, layout, breakpoints and interaction states |
 | `src/assets/images/` | Local source images |
-| `src/scripts/inquiry.ts` | Form submission boundary |
+| `src/scripts/inquiry.ts` | Demo form validation and service selection |
 | `src/layouts/BaseLayout.astro` | Metadata, social preview and canonical URL |
 | `src/pages/` | Home page, robots.txt and conditional sitemap content |
 
@@ -44,13 +47,13 @@ Selecting a service card preselects its service in the enquiry form. The mobile 
 
 `site.isDemo` defaults to `true`. The footer identifies the fictional business, the form explains its purpose before submission and the document contains `noindex, nofollow`. No business structured data, reviews, street address or telephone number are supplied. The fictional contact fields are empty. No analytics, cookies, local storage or external form services are used.
 
-The form checks the required name, email and message fields. Errors appear beside the corresponding inputs and the first invalid field receives focus. Valid entries display the Czech message *Toto je ukázkový formulář. Žádné údaje nebyly odeslány.* Values exist only in the current page. The HTML form uses `method="dialog"` and a disabled submit button until initialization, so it cannot fall back to transmitting values in a URL when JavaScript is unavailable.
+The form checks the name, email and message in the browser and focuses the first invalid field. Valid entries display *Toto je ukázkový formulář. Žádné údaje nebyly odeslány.* The controls are disabled until the demo initializes. The production build also sets a Content Security Policy with `connect-src 'none'` and `form-action 'none'`.
 
 In demo mode, `robots.txt` permits crawlers to read the page-level indexing directive and the sitemap contains no URLs. In production mode, supplying a site origin adds the home page to the sitemap and advertises it in `robots.txt`. Sitemap content is generated during the build.
 
 ## GitHub Pages
 
-The public demo is hosted at [biarkvia.github.io/voltar-auto](https://biarkvia.github.io/voltar-auto/). A push to `main` runs the type check, builds the site and deploys the resulting `dist/` directory. The workflow reads the origin and subdirectory from the Pages configuration. For a fork, select **GitHub Actions** under **Settings → Pages → Build and deployment**.
+The public demo is hosted at [biarkvia.github.io/voltar-auto](https://biarkvia.github.io/voltar-auto/). A push to `main` runs the type check, builds the site, tests the result in Chromium and deploys it. The workflow reads the origin and subdirectory from the Pages configuration. For a fork, select **GitHub Actions** under **Settings → Pages → Build and deployment**.
 
 ## Deploy on Vercel or Netlify
 
@@ -65,11 +68,9 @@ Provider documentation: [Astro on Vercel](https://docs.astro.build/en/guides/dep
 
 ## Connecting a real enquiry service
 
-For a real client, edit the contact data and replace the non-demo branch of `submitInquiry` in `src/scripts/inquiry.ts`. The function receives the validated `FormData` with keys `name`, `email`, `phone`, `service` and `message`.
+When `isDemo` is false, the form is disabled and shows an availability notice. To accept enquiries, add a production submit handler in `src/scripts/inquiry.ts` and update that notice in `Contact.astro`. The existing field names are `name`, `email`, `phone`, `service` and `message`.
 
-Use that branch to call a Formspree endpoint, a configured Netlify Forms endpoint or a same-origin API. For Netlify Forms, also enable detection and provide the form name, hidden form-name field and static provider markup before deploying. Check the response before returning a success message and throw on failure so the existing form UI can show an error. Preserve the demo return before any network call. Keep service secrets on the server and validate submissions there. The existing controls, errors and accessible status region can be reused.
-
-Switch `isDemo` off only when the content and submission flow are ready for the real business. Switching the flag alone shows an unavailable message on submit. Set the new production origin and rebuild.
+For a fetch-based integration with Formspree or a server endpoint, allow its origin in `connect-src` for the production build, validate fields on the server and show confirmation only after the server accepts the enquiry. For Netlify Forms, also enable form detection and add the provider's form name to the markup and submission. Keep the demo handler local.
 
 ## Media and licences
 
