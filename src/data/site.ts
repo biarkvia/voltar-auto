@@ -14,7 +14,7 @@ export const site = {
   slogan: ['Váš vůz.', 'Naše starost.'],
   description: 'Poctivý autoservis v Praze. Diagnostika, údržba a opravy bez zbytečných komplikací.',
   isDemo: true,
-  demoLabel: 'Ukázkový projekt – fiktivní autoservis',
+  demoLabel: 'Ukázkový projekt - fiktivní autoservis',
   contact: { location: 'Praha, Česko', email: '', phone: '' },
   nav: [
     { label: 'Služby', href: '#sluzby' },
