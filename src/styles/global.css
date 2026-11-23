@@ -27,6 +27,7 @@
 }
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; scroll-padding-top: calc(var(--nav-height) + .75rem); }
+html:has(.lightbox[open]) { overflow: hidden; }
 body, h1, h2, h3, p, ul, ol, figure { margin: 0; }
 ul, ol { padding: 0; }
 a { color: inherit; text-decoration: none; }
@@ -39,7 +40,7 @@ svg { flex-shrink: 0; }
 :focus-visible { outline: 3px solid #1576ca; outline-offset: 4px; }
 .dark-section :focus-visible, .header :focus-visible, .hero :focus-visible, .footer :focus-visible { outline-color: #ffae88; }
 [tabindex="-1"]:focus:not(:focus-visible) { outline: none; }
-.wrap { width: min(calc(100% - 2 * var(--gutter)), 80rem); margin-inline: auto; }
+.wrap { width: min(calc(100% - 2 * var(--gutter)), 80rem); margin-inline: auto; overflow-wrap: anywhere; }
 .section { padding-block: var(--pad); }
 .skip-link { position: fixed; top: .6rem; left: .75rem; z-index: 100; padding: .7rem 1.2rem; background: white; color: var(--ink); transform: translateY(-160%); }
 .skip-link:focus { transform: translateY(0); }
@@ -93,13 +94,13 @@ h3 { font: 700 clamp(1.45rem, 2vw, 1.8rem)/1.13 var(--display); }
 .hero-photo { height: 57%; object-fit: cover; object-position: 73% 48%; }
 .hero-shade { background: linear-gradient(0deg,#141518 35%,rgb(20 21 24 / 92%) 48%,rgb(20 21 24 / 4%) 69%); }
 .hero-inner { display: flex; align-items: flex-end; min-height: 32.75rem; padding-block: 10.6rem 2.15rem; }
-.hero-copy { max-width: 45rem; }
+.hero-copy { min-width: 0; max-width: 45rem; }
 .hero-eyebrow { color: #f6f6f4; letter-spacing: .17em; margin-bottom: .95rem; }
 .hero-eyebrow::before { width: 1.9rem; }
 .hero h1 { font-size: clamp(3.52rem, 12vw, 6.7rem); letter-spacing: -.021em; line-height: .94; margin-left: -.035em; }
 .hero h1 em { color: var(--orange); }
 .hero-intro { max-width: 28rem; margin-top: 1.15rem; color: #e0e1e2; font-size: 1.05rem; line-height: 1.49; }
-.hero-actions { display: flex; gap: .7rem; margin-top: 1.45rem; }
+.hero-actions { display: flex; flex-wrap: wrap; gap: .7rem; margin-top: 1.45rem; }
 .hero-actions .button { padding-inline: 1.1rem; }
 .promise-strip { background: var(--carbon); color: #f0f0ef; border-block: 1px solid var(--dark-rule); }
 .promise-list { list-style: none; display: grid; padding-block: .55rem; }
@@ -144,11 +145,12 @@ h3 { font: 700 clamp(1.45rem, 2vw, 1.8rem)/1.13 var(--display); }
 .gallery-caption { left: 1rem; font-weight: 600; }
 .zoom { right: .9rem; display: grid; place-items: center; width: 1.8rem; height: 1.8rem; border: 1px solid #ffffff80; border-radius: 2px; background: #14171c66; }
 .lightbox { width: min(64rem, 94vw); max-height: 94svh; padding: 1rem; border: 1px solid #5a5e64; color: white; background: var(--ink); }
+.lightbox[open] { display: flex; flex-direction: column; }
 .lightbox::backdrop { background: #0a0c10e8; }
-.lightbox-head, .lightbox-controls { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.lightbox-head, .lightbox-controls { flex: none; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
 .lightbox-head { margin-bottom: .55rem; }
 .lightbox-head h3 { font-size: 1.5rem; }
-.lightbox-image { width: 100%; height: min(58vw, 64svh); object-fit: contain; background: #0e0f12; }
+.lightbox-image { width: 100%; height: min(58vw, 64svh); min-height: 0; object-fit: contain; background: #0e0f12; }
 .lightbox button { background: transparent; color: #fff; border: 1px solid #6e7176; min-height: 2.75rem; border-radius: 2px; padding: .35rem .85rem; }
 .lightbox button:hover { background: #34373d; }
 .close-button { min-width: 2.75rem; font-size: 1.6rem; line-height: 1; }
@@ -243,6 +245,18 @@ h3 { font: 700 clamp(1.45rem, 2vw, 1.8rem)/1.13 var(--display); }
 }
 @media (min-width: 43rem) and (max-width: 55.99rem) {
   .hero-shade { background: linear-gradient(90deg, rgb(12 14 17 / 95%), rgb(12 14 17 / 76%) 34%, rgb(12 14 17 / 45%) 56%, transparent 84%); }
+}
+@media (max-width: 17rem) {
+  :root { --gutter: 5vw; }
+  .brand > span { font-size: min(1.86rem, 8vw); }
+  .brand > svg { width: min(2.6rem, 12vw); }
+  .hero h1 { font-size: min(3.12rem, calc(1.5rem + 8vw)); }
+  h2 { font-size: min(2.8rem, calc(1.25rem + 7vw)); }
+  .button { max-width: 100%; white-space: normal; text-align: center; }
+  .steps li { padding-left: 0; }
+  .step-top { position: static; align-items: flex-start; margin-bottom: .45rem; }
+  .steps li:not(:last-child) .step-top::after { display: none; }
+  .lightbox-controls { flex-wrap: wrap; }
 }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }

@@ -58,6 +58,23 @@ test('the gallery supports keyboard navigation and restores focus', async ({ pag
   await expect(firstPhoto).toBeFocused();
 });
 
+test('a landscape gallery keeps its controls visible and the page stationary', async ({ page }) => {
+  await page.setViewportSize({ width: 568, height: 320 });
+  await page.goto('./');
+  await page.getByRole('link', { name: 'Zvětšit fotografii – Na zvedáku' }).click();
+
+  const dialog = page.getByRole('dialog');
+  for (const button of await dialog.getByRole('button').all()) {
+    await expect(button).toBeInViewport({ ratio: 1 });
+  }
+  const root = page.locator('html');
+  await expect(root).toHaveCSS('overflow-y', 'hidden');
+  await dialog.getByRole('button', { name: 'Další' }).click();
+  await expect(dialog).toHaveAccessibleName('Diagnostika motoru');
+  await dialog.getByRole('button', { name: 'Zavřít fotografii' }).click();
+  await expect(root).not.toHaveCSS('overflow-y', 'hidden');
+});
+
 test.describe('without JavaScript', () => {
   test.use({ javaScriptEnabled: false, viewport: { width: 375, height: 812 } });
   test('section links work and the demo form stays disabled', async ({ page }) => {
