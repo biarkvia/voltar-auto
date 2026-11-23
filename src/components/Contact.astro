@@ -2,78 +2,67 @@
 import Icon from './Icon.astro';
 import { site } from '../data/site';
 ---
+
 <section class="contact section" id="kontakt" aria-labelledby="contact-title" tabindex="-1">
   <div class="wrap contact-pair">
-    <div class="contact-copy"><p class="eyebrow">Kontakt</p><h2 id="contact-title">Objednat servis<span class="period">.</span></h2>
+    <div class="contact-copy">
+      <p class="eyebrow">Kontakt</p>
+      <h2 id="contact-title">Objednat servis<span class="period">.</span></h2>
       <p>Napište, co váš vůz potřebuje. Připojte značku a model, ať máme lepší představu.</p>
       <div class="location"><Icon name="pin"/>{site.contact.location}</div>
       {!site.isDemo && site.contact.email && <a href={'mailto:' + site.contact.email}>{site.contact.email}</a>}
       {!site.isDemo && site.contact.phone && <a href={'tel:' + site.contact.phone}>{site.contact.phone}</a>}
     </div>
+
     <div class="form-panel">
-      {site.isDemo && <p class="demo-note"><Icon name="info" size={19}/><span><strong>Ukázkový formulář.</strong> Vyzkoušejte si poptávku s fiktivními údaji. Údaje se nikam neodesílají ani neukládají.</span></p>}
-      <form id="servisni-formular" method="dialog" novalidate data-demo={String(site.isDemo)} autocomplete="off">
-        <div class="form-grid">
-          <div class="field"><label for="jmeno">Jméno a příjmení <span>*</span></label>
-            <input id="jmeno" name="name" required maxlength="120" aria-describedby="jmeno-error"/>
-            <span id="jmeno-error" class="field-error" aria-live="polite"></span></div>
-          <div class="field"><label for="email">E-mail <span>*</span></label>
-            <input id="email" name="email" type="email" required maxlength="254" aria-describedby="email-error"/>
-            <span id="email-error" class="field-error" aria-live="polite"></span></div>
-          <div class="field"><label for="telefon">Telefon <small>(nepovinné)</small></label><input id="telefon" name="phone" type="tel" maxlength="40"/></div>
-          <div class="field"><label for="sluzba">Typ služby</label><div class="select-wrap">
-            <select id="sluzba" name="service"><option value="">Vyberte službu</option>{site.services.map(s => <option value={s.id}>{s.title}</option>)}<option value="jina">Potřebuji poradit</option></select><Icon name="chevron" size={16}/></div></div>
-          <div class="field full-field"><label for="zprava">Zpráva <span>*</span></label>
-            <textarea id="zprava" name="message" rows="4" required maxlength="4000" aria-describedby="zprava-error"></textarea>
-            <span id="zprava-error" class="field-error" aria-live="polite"></span></div>
-        </div>
-        <div class="form-footer"><small>* Povinné údaje</small><button class="button button-orange" type="submit" disabled>Odeslat poptávku</button></div>
-        <p class="form-status" role="status" aria-live="polite" aria-atomic="true"></p>
-        <noscript><p>Pro ověření údajů ve formuláři povolte JavaScript.</p></noscript>
+      <p class="demo-note" id="form-note">
+        <Icon name="info" size={19}/>
+        {site.isDemo
+          ? <span><strong>Ukázkový formulář.</strong> Použijte smyšlené údaje. Nic se neodesílá ani neukládá.</span>
+          : <span>Online poptávky nyní nepřijímáme.</span>}
+      </p>
+      <form id="servisni-formular" method="dialog" novalidate data-demo={String(site.isDemo)} autocomplete="off" aria-labelledby="contact-title" aria-describedby="form-note">
+        <fieldset disabled>
+          <div class="form-grid">
+            <div class="field">
+              <label for="jmeno">Jméno a příjmení <span>*</span></label>
+              <input id="jmeno" name="name" required maxlength="120" aria-describedby="jmeno-error" data-missing="Vyplňte jméno a příjmení."/>
+              <span id="jmeno-error" class="field-error" aria-live="polite"></span>
+            </div>
+            <div class="field">
+              <label for="email">E-mail <span>*</span></label>
+              <input id="email" name="email" type="email" required maxlength="254" aria-describedby="email-error" data-missing="Vyplňte e-mailovou adresu."/>
+              <span id="email-error" class="field-error" aria-live="polite"></span>
+            </div>
+            <div class="field">
+              <label for="telefon">Telefon <small>(nepovinné)</small></label>
+              <input id="telefon" name="phone" type="tel" maxlength="40"/>
+            </div>
+            <div class="field">
+              <label for="sluzba">Typ služby</label>
+              <div class="select-wrap">
+                <select id="sluzba" name="service">
+                  <option value="">Vyberte službu</option>
+                  {site.services.map(s => <option value={s.id}>{s.title}</option>)}
+                  <option value="jina">Potřebuji poradit</option>
+                </select>
+                <Icon name="chevron" size={16}/>
+              </div>
+            </div>
+            <div class="field full-field">
+              <label for="zprava">Zpráva <span>*</span></label>
+              <textarea id="zprava" name="message" rows="4" required maxlength="4000" aria-describedby="zprava-error" data-missing="Napište krátkou zprávu o svém voze."></textarea>
+              <span id="zprava-error" class="field-error" aria-live="polite"></span>
+            </div>
+          </div>
+          <div class="form-footer">
+            <small>* Povinné údaje</small>
+            <button class="button button-orange" type="submit">Odeslat poptávku</button>
+          </div>
+        </fieldset>
+        <p class="form-status" role="status">{site.isDemo && 'Pro vyzkoušení formuláře povolte JavaScript.'}</p>
       </form>
     </div>
   </div>
 </section>
-<script>
-  import { submitInquiry } from '../scripts/inquiry';
-  const form = document.querySelector<HTMLFormElement>('#servisni-formular')!;
-  const fields = [...form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>('[required]')];
-  const status = form.querySelector<HTMLElement>('.form-status')!;
-  const button = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
-  const service = form.querySelector<HTMLSelectElement>('select')!;
-  const messages: Record<string, string> = {
-    name: 'Vyplňte jméno a příjmení.', email: 'Vyplňte e-mailovou adresu.', message: 'Napište krátkou zprávu o svém voze.'
-  };
-  function validate(field: HTMLInputElement | HTMLTextAreaElement) {
-    const error = !field.value.trim() ? messages[field.name] : field.validity.typeMismatch ? 'Zadejte platnou e-mailovou adresu.' : '';
-    field.setAttribute('aria-invalid', String(Boolean(error)));
-    document.getElementById(field.id + '-error')!.textContent = error;
-    return !error;
-  }
-  button.disabled = false;
-  fields.forEach(field => {
-    field.addEventListener('blur', () => { if (field.value || field.hasAttribute('aria-invalid')) validate(field); });
-    field.addEventListener('input', () => { if (field.getAttribute('aria-invalid') === 'true') validate(field); });
-  });
-  form.addEventListener('input', () => { status.textContent = ''; });
-  form.addEventListener('submit', async event => {
-    event.preventDefault();
-    status.textContent = '';
-    const invalid = fields.filter(field => !validate(field));
-    if (invalid.length) { invalid[0].focus(); return; }
-    button.disabled = true;
-    try {
-      status.textContent = await submitInquiry(form.dataset.demo === 'true', new FormData(form));
-    } catch {
-      status.textContent = 'Poptávku se nepodařilo odeslat. Zkuste to prosím později.';
-    } finally { button.disabled = false; }
-  });
-  document.querySelectorAll<HTMLAnchorElement>('[data-service]').forEach(link => {
-    link.addEventListener('click', event => {
-      if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
-      service.value = link.dataset.service || '';
-      status.textContent = '';
-      form.querySelector<HTMLInputElement>('input')?.focus({preventScroll: true});
-    });
-  });
-</script>
+<script src="../scripts/inquiry.ts"></script>

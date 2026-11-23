@@ -1,9 +1,10 @@
 ---
 import { site } from '../data/site';
+const [firstWord, ...rest] = site.name.split(' ');
 ---
 <a class="brand" href="#zacatek" aria-label={site.name + ' – zpět nahoru'}>
   <svg viewBox="0 0 54 36" width="48" height="32" aria-hidden="true" fill="currentColor">
     <path d="M0 2h11l9 18-6 11zM17 2h10l5 10-6 12zM39 2h13L31 34H18z"/>
   </svg>
-  <span>{site.name.split(' ')[0]} <span>{site.name.split(' ').slice(1).join(' ')}</span></span>
+  <span>{firstWord} <span>{rest.join(' ')}</span></span>
 </a>
